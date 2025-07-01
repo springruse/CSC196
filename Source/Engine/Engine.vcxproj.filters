@@ -15,4 +15,12 @@
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\Math.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Time.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
