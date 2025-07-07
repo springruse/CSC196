@@ -24,5 +24,5 @@ namespace piMath {
 	using std::min;
 	using std::max;
 	using std::clamp;
-	} // namespace Math
+	} // namespace Math above
 }
