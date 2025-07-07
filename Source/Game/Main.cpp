@@ -1,4 +1,7 @@
 #include <SDL3/SDL.h>
+#include <Core/Random.h>
+#include <Renderer/Renderer.h>
+#include <Engine/Core/Math.h>
 #include <random>
 #include <iostream>
 
@@ -20,9 +23,11 @@
 //}
 
 
-
 int main(int argc, char* argv[]) {
+    piMath::Renderer newRenderer;
 
+	newRenderer.Initialize();
+    newRenderer.CreateWindow("SDL3 Project", 1280, 1024);
     // Setup screen dimensions
     const int SCREEN_WIDTH = 1280;
     const int SCREEN_HEIGHT = 1024;
@@ -52,6 +57,7 @@ int main(int argc, char* argv[]) {
 
     SDL_Event e;
     bool quit = false;
+    vec2 v(30, 40);
 
     // Define a rectangle
     SDL_FRect greenSquare{ 270, 190, 200, 200 };
@@ -64,6 +70,15 @@ int main(int argc, char* argv[]) {
             }
         }
 
+        newRenderer.SetColor(0,0,0);
+        newRenderer.Clear();
+
+		for (int i = 0; i < 100; ++i) { // Draw 100 lines per frame
+            newRenderer.SetColor(piMath::Random::getRandomInt(0, 255), piMath::Random::getRandomInt(0, 255), piMath::Random::getRandomInt(0, 255), 255);
+            newRenderer.DrawLine(piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024, piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024);
+            newRenderer.Present();
+		}
+
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set render draw color to black
         SDL_RenderClear(renderer); // Clear the renderer
 
@@ -73,16 +88,17 @@ int main(int argc, char* argv[]) {
 		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 0); 
 		bool keepGoing = true; // This is just a placeholder for the while loop condition
 
-        for (int i = 0; i < 100; ++i) { // Draw 50 lines per frame
-            float x1 = randX(gen);
-            float y1 = randY(gen);
-            float x2 = randX(gen);
-            float y2 = randY(gen);
-			SDL_SetRenderDrawColor(renderer,x1 , y1, x2, y2); // Set color to random
-            SDL_RenderLine(renderer, x1, y1, x2, y2);
-            SDL_RenderPoint(renderer, x2, y2);
-        }
+   //     for (int i = 0; i < 100; ++i) { // Draw 100 lines per frame
+   //         float x1 = randX(gen);
+   //         float y1 = randY(gen);
+   //         float x2 = randX(gen);
+   //         float y2 = randY(gen);
+			//SDL_SetRenderDrawColor(renderer,x1 , y1, x2, y2); // Set color to random
+   //         SDL_RenderLine(renderer, x1, y1, x2, y2);
+   //         SDL_RenderPoint(renderer, x2, y2);
+   //     }
 
+        
        
 		SDL_RenderPresent(renderer); // Present the renderer to the screen
     }
