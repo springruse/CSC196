@@ -5,12 +5,12 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{fd55939a-fff6-4ddf-a581-52c639fd7b4e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Math">
-      <UniqueIdentifier>{fd55939a-fff6-4ddf-a581-52c639fd7b4e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Core">
       <UniqueIdentifier>{b35c8fd2-6a21-41bb-89c6-6a3c56548baf}</UniqueIdentifier>
@@ -43,7 +43,7 @@
     <ClInclude Include="Renderer\Renderer.h">
       <Filter>Source\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2.h">
+    <ClInclude Include="Math\Vector2.h">
       <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>

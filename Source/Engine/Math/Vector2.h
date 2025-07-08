@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace piMath {
+
 	template<typename T>
 	struct Vector2 
 	{
@@ -13,5 +13,3 @@ namespace piMath {
 
 	using ivec2 = Vector2<int>;
 	using vec2 = Vector2<float>;
-
-}

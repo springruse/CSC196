@@ -183,8 +183,8 @@
     <ClInclude Include="Core\Time.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Core\Random.h" />
+    <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Renderer\Renderer.h" />
-    <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

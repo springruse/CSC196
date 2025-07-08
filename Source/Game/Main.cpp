@@ -1,11 +1,10 @@
 #include <SDL3/SDL.h>
 #include <Core/Random.h>
 #include <Renderer/Renderer.h>
-#include <Engine/Core/Math.h>
+#include <Math/Math.h>
+#include <Math/Vector2.h>
 #include <random>
 #include <iostream>
-
-
 //int main() {
 //
 //	// const float degree = piMath::radToDeg(piMath::pi);
@@ -57,7 +56,7 @@ int main(int argc, char* argv[]) {
 
     SDL_Event e;
     bool quit = false;
-    vec2 v(30, 40);
+    vec2 v(30, 30);
 
     // Define a rectangle
     SDL_FRect greenSquare{ 270, 190, 200, 200 };
