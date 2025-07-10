@@ -85,7 +85,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\ThirdParty\SDL3\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\ThirdParty\fmod\core\inc;$(SolutionDir)Source\ThirdParty\SDL3\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,10 +94,10 @@
       <AdditionalDependencies>sdl3.lib</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>sdl3.lib</AdditionalDependencies>
+      <AdditionalDependencies>sdl3.lib;fmod_vc.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\fmod\core\lib\$(PlatformTarget);$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -109,7 +109,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\ThirdParty\SDL3\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\ThirdParty\fmod\core\inc;$(SolutionDir)Source\ThirdParty\SDL3\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -120,10 +120,10 @@
       <AdditionalDependencies>sdl3.lib</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>sdl3.lib</AdditionalDependencies>
+      <AdditionalDependencies>sdl3.lib;fmod_vc.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\fmod\core\lib\$(PlatformTarget);$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -133,7 +133,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\ThirdParty\SDL3\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\ThirdParty\fmod\core\inc;$(SolutionDir)Source\ThirdParty\SDL3\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,10 +142,10 @@
       <AdditionalDependencies>sdl3.lib</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>sdl3.lib</AdditionalDependencies>
+      <AdditionalDependencies>sdl3.lib;fmod_vc.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\fmod\core\lib\$(PlatformTarget);$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -157,7 +157,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\ThirdParty\SDL3\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\ThirdParty\fmod\core\inc;$(SolutionDir)Source\ThirdParty\SDL3\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -168,10 +168,10 @@
       <AdditionalDependencies>sdl3.lib</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>sdl3.lib</AdditionalDependencies>
+      <AdditionalDependencies>sdl3.lib;fmod_vc.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\fmod\core\lib\$(PlatformTarget);$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>

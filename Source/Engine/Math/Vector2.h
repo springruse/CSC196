@@ -1,6 +1,6 @@
 #pragma once
 #include <cassert>
-#include <Math.h>
+#include "Math.h"
 
 namespace piMath {
 	template<typename T>

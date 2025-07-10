@@ -5,6 +5,7 @@
 #include <Math/Vector2.h>
 #include <Core/Time.h>
 #include <Input/InputSystem.h>
+#include <fmod.hpp>
 #include <random>
 #include <vector>
 #include <iostream>
@@ -28,27 +29,25 @@
 int main(int argc, char* argv[]) {
     piMath::Time time;
     piMath::Renderer newRenderer;
-    
 
 	newRenderer.Initialize();
     newRenderer.CreateWindow("SDL3 Project", 1280, 1024);
     piMath::InputSystem input;
 	input.Initialize();
-    // Setup screen dimensions
-    const int SCREEN_WIDTH = 1280;
-    const int SCREEN_HEIGHT = 1024;
 
-    // Setup random number generator
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> randX(0.0f, SCREEN_WIDTH);
-    std::uniform_real_distribution<float> randY(0.0f, SCREEN_HEIGHT);
+    // create audio system
+    FMOD::System* audio;
+    FMOD::System_Create(&audio);
+
+    void* extradriverdata = nullptr;
+    audio->init(32, FMOD_INIT_NORMAL, extradriverdata);
 
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Event e;
     bool quit = false;
 
+    // generate random stars that move
     piMath::vec2 speed{ 0.1f, 0.0f };
     std::vector<piMath::vec2> stars;
     for (int i = 0; i < 100; i++) {
@@ -58,6 +57,21 @@ int main(int argc, char* argv[]) {
     
     // Define a rectangle
     SDL_FRect greenSquare{ 270, 190, 200, 200 };
+
+
+
+    // play a sound before loop starts
+    FMOD::Sound* sound = nullptr;
+    audio->createSound("test.wav", FMOD_DEFAULT, 0, &sound);
+
+    audio->playSound(sound, 0, false, nullptr);
+
+    std::vector<FMOD::Sound*> sounds;
+    audio->createSound("bass.wav", FMOD_DEFAULT, 0, &sound);
+    sounds.push_back(sound);
+
+    audio->createSound("snare.wav", FMOD_DEFAULT, 0, &sound);
+    sounds.push_back(sound);
 
     //MAIN LOOP
     while (!quit) {
@@ -74,9 +88,23 @@ int main(int argc, char* argv[]) {
 			std::cout << "A key pressed!" << std::endl;
         }
 
+        if (input.getKeyReleased(SDL_SCANCODE_E)) {
+            audio->playSound(sound, 0, false, nullptr);
+        }
+
+        if (input.getKeyReleased(SDL_SCANCODE_A)) {
+            std::cout << "A key pressed!" << std::endl;
+        }
+
+        if (input.getKeyReleased(SDL_SCANCODE_A)) {
+            std::cout << "A key pressed!" << std::endl;
+        }
+
         if (input.getMouseButtonDown(0)) {
 			std::cout << "Left mouse button pressed!" << std::endl;
         }
+
+
 
 		piMath::vec2 mouse = input.getMousePosition();
 		std::cout << mouse.x << ", " << mouse.y << std::endl;
