@@ -34,7 +34,7 @@ bool piMath::Renderer::CreateWindow(const std::string& name, int width, int heig
         return false;
     }
 
-    return false;
+    return true;
 }
 
 void piMath::Renderer::SetColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)

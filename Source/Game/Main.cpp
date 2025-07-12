@@ -29,11 +29,12 @@
 int main(int argc, char* argv[]) {
     piMath::Time time;
     piMath::Renderer newRenderer;
+	piMath::InputSystem inputSystem;
+    std::vector<piMath::vec2> points;
 
 	newRenderer.Initialize();
     newRenderer.CreateWindow("SDL3 Project", 1280, 1024);
-    piMath::InputSystem input;
-	input.Initialize();
+	inputSystem.Initialize();
 
     // create audio system
     FMOD::System* audio;
@@ -82,51 +83,66 @@ int main(int argc, char* argv[]) {
                 quit = true;
             }
         }
-		input.Update();
+		inputSystem.Update();
 
-        if (input.getKeyReleased(SDL_SCANCODE_A)) {
+        if (inputSystem.getKeyReleased(SDL_SCANCODE_A)) {
 			std::cout << "A key pressed!" << std::endl;
         }
 
-        if (input.getKeyReleased(SDL_SCANCODE_E)) {
+        if (inputSystem.getKeyReleased(SDL_SCANCODE_E)) {
             audio->playSound(sound, 0, false, nullptr);
         }
 
-        if (input.getKeyReleased(SDL_SCANCODE_A)) {
+        if (inputSystem.getKeyReleased(SDL_SCANCODE_A)) {
             std::cout << "A key pressed!" << std::endl;
         }
 
-        if (input.getKeyReleased(SDL_SCANCODE_A)) {
+        if (inputSystem.getKeyReleased(SDL_SCANCODE_A)) {
             std::cout << "A key pressed!" << std::endl;
         }
 
-        if (input.getMouseButtonDown(0)) {
+        if (inputSystem.getMouseButtonDown(0)) {
 			std::cout << "Left mouse button pressed!" << std::endl;
         }
 
 
-
-		piMath::vec2 mouse = input.getMousePosition();
+		piMath::vec2 mouse = inputSystem.getMousePosition();
 		std::cout << mouse.x << ", " << mouse.y << std::endl;
 
         newRenderer.SetColor(0,0,0);
         newRenderer.Clear();
 
+		if (inputSystem.GetMouseReleased(0)) {
+            points.push_back(inputSystem.getMousePosition());
+		}
 
-        for (auto& star : stars) {
-            star += speed / time.GetDeltaTime();
-
-            if (star[0] > 1280) {
-                star[0] = 0;
-            }
-			if (star[0] < 0) {
-				star[0] = 1024;
-			}
-
-            newRenderer.SetColor(piMath::Random::getRandomInt(256), piMath::Random::getRandomInt(256), piMath::Random::getRandomInt(256));
-            newRenderer.DrawPoint(star.x, star.y); // Draw the star
-       
+        if (inputSystem.getMouseButtonDown(0)) {
+            piMath::vec2 position = inputSystem.getMousePosition();
+            if (points.empty()) points.push_back(position);
+            else if ((position - points.back()).Length() > 10) points.push_back(position);
         }
+
+        for (int i = 0; i < (int)points.size() - 1; i++) {
+            // set color so we can see what we drew
+			newRenderer.SetColor(255,255,255);
+            newRenderer.DrawLine(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
+        }
+
+
+   //     for (auto& star : stars) {
+   //         star += speed / time.GetDeltaTime();
+
+   //         if (star[0] > 1280) {
+   //             star[0] = 0;
+   //         }
+			//if (star[0] < 0) {
+			//	star[0] = 1024;
+			//}
+
+   //         newRenderer.SetColor(piMath::Random::getRandomInt(256), piMath::Random::getRandomInt(256), piMath::Random::getRandomInt(256));
+   //         newRenderer.DrawPoint(star.x, star.y); // Draw the star
+   //    
+   //     }
 
 		//for (int i = 0; i < 100; ++i) { // Draw 100 lines per frame
   //          newRenderer.SetColor(piMath::Random::getRandomInt(0, 255), piMath::Random::getRandomInt(0, 255), piMath::Random::getRandomInt(0, 255), 255);
