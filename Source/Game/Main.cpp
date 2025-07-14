@@ -1,13 +1,16 @@
-#include <SDL3/SDL.h>
 #include <Core/Random.h>
 #include <Renderer/Renderer.h>
 #include <Math/Math.h>
 #include <Math/Vector2.h>
 #include <Core/Time.h>
 #include <Input/InputSystem.h>
-#include <fmod.hpp>
+#include <Audio/AudioSystem.h>
+
+//#include <fmod.hpp>
+//#include <SDL3/SDL.h>
 #include <random>
 #include <vector>
+
 #include <iostream>
 //int main() {
 //
@@ -37,6 +40,9 @@ int main(int argc, char* argv[]) {
 	inputSystem.Initialize();
 
     // create audio system
+    piMath::AudioSystem audioSystem;
+
+
     FMOD::System* audio;
     FMOD::System_Create(&audio);
 
@@ -55,25 +61,14 @@ int main(int argc, char* argv[]) {
        
         stars.push_back(piMath::vec2{ piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024 }); // use curly for constructors
     }
-    
-    // Define a rectangle
-    SDL_FRect greenSquare{ 270, 190, 200, 200 };
-
-
 
     // play a sound before loop starts
-    FMOD::Sound* sound = nullptr;
-    audio->createSound("test.wav", FMOD_DEFAULT, 0, &sound);
 
-    audio->playSound(sound, 0, false, nullptr);
-
-    std::vector<FMOD::Sound*> sounds;
-    audio->createSound("bass.wav", FMOD_DEFAULT, 0, &sound);
-    sounds.push_back(sound);
-
-    audio->createSound("snare.wav", FMOD_DEFAULT, 0, &sound);
-    sounds.push_back(sound);
-
+	audioSystem.addSound("bass.wav", "bass");
+	audioSystem.addSound("snare.wav", "snare");
+	audioSystem.addSound("clap.wav", "clap");
+	audioSystem.addSound("close-hat.wav", "close-hat");
+	audioSystem.addSound("open-hat.wav", "open-hat");
     //MAIN LOOP
     while (!quit) {
         time.Tick();
@@ -89,21 +84,29 @@ int main(int argc, char* argv[]) {
 			std::cout << "A key pressed!" << std::endl;
         }
 
-        if (inputSystem.getKeyReleased(SDL_SCANCODE_E)) {
-            audio->playSound(sound, 0, false, nullptr);
-        }
-
-        if (inputSystem.getKeyReleased(SDL_SCANCODE_A)) {
-            std::cout << "A key pressed!" << std::endl;
-        }
-
-        if (inputSystem.getKeyReleased(SDL_SCANCODE_A)) {
-            std::cout << "A key pressed!" << std::endl;
-        }
-
         if (inputSystem.getMouseButtonDown(0)) {
 			std::cout << "Left mouse button pressed!" << std::endl;
         }
+
+        if (inputSystem.getKeyReleased(SDL_SCANCODE_F)) {
+			audioSystem.playSound("bass");
+        }
+		if (inputSystem.getKeyReleased(SDL_SCANCODE_G)) {
+			audioSystem.playSound("snare");
+		}
+		if (inputSystem.getKeyReleased(SDL_SCANCODE_H)) {
+			audioSystem.playSound("clap");
+		}
+		if (inputSystem.getKeyReleased(SDL_SCANCODE_J)) {
+			audioSystem.playSound("close-hat");
+		}
+		if (inputSystem.getKeyReleased(SDL_SCANCODE_K)) {
+			audioSystem.playSound("open-hat");
+		}
+
+		audioSystem.Update();
+		//std::cout << "Time: " << time.GetTime() << std::endl;
+		//std::cout << "Delta Time: " << time.GetDeltaTime() << std::endl;
 
 
 		piMath::vec2 mouse = inputSystem.getMousePosition();
@@ -155,6 +158,7 @@ int main(int argc, char* argv[]) {
     }
     
 	newRenderer.Shutdown();
+    audioSystem.Shutdown();
     
 
     return 0;
