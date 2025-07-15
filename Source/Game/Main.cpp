@@ -39,15 +39,10 @@ int main(int argc, char* argv[]) {
     newRenderer.CreateWindow("SDL3 Project", 1280, 1024);
 	inputSystem.Initialize();
 
+
     // create audio system
     piMath::AudioSystem audioSystem;
-
-
-    FMOD::System* audio;
-    FMOD::System_Create(&audio);
-
-    void* extradriverdata = nullptr;
-    audio->init(32, FMOD_INIT_NORMAL, extradriverdata);
+    audioSystem.Initialize();
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -69,6 +64,8 @@ int main(int argc, char* argv[]) {
 	audioSystem.addSound("clap.wav", "clap");
 	audioSystem.addSound("close-hat.wav", "close-hat");
 	audioSystem.addSound("open-hat.wav", "open-hat");
+    
+
     //MAIN LOOP
     while (!quit) {
         time.Tick();
@@ -109,8 +106,8 @@ int main(int argc, char* argv[]) {
 		//std::cout << "Delta Time: " << time.GetDeltaTime() << std::endl;
 
 
-		piMath::vec2 mouse = inputSystem.getMousePosition();
-		std::cout << mouse.x << ", " << mouse.y << std::endl;
+		/*piMath::vec2 mouse = inputSystem.getMousePosition();
+		std::cout << mouse.x << ", " << mouse.y << std::endl;*/
 
         newRenderer.SetColor(0,0,0);
         newRenderer.Clear();
@@ -155,6 +152,7 @@ int main(int argc, char* argv[]) {
 
         
         newRenderer.Present();
+
     }
     
 	newRenderer.Shutdown();

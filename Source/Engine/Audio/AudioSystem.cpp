@@ -1,6 +1,6 @@
 #include "AudioSystem.h"
 #include <fmod_errors.h>
-#include <../Core/StringHelper.h>
+#include <../../Core/StringHelper.h>
 #include <iostream>
 
 namespace piMath {
@@ -20,8 +20,13 @@ namespace piMath {
 			return false;
 		}
 
+		result = m_system->init(512, FMOD_INIT_NORMAL, nullptr);
+		if (!CheckFMODResult(result)) {
+			return false;
+		}
 
-		return false;
+
+		return true;
 	}
 	
 	void AudioSystem::Shutdown()
@@ -53,7 +58,7 @@ namespace piMath {
 		FMOD::Sound* sound = nullptr;
 		
 		// attempt to create sound
-		FMOD_RESULT  result = m_system->createSound(key.c_str(), FMOD_DEFAULT, 0, &sound);
+		FMOD_RESULT  result = m_system->createSound(filename.c_str(), FMOD_DEFAULT, 0, &sound);
 
 		// check if sound was created successfully
 		if (!CheckFMODResult(result)) {
