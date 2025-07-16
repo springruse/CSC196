@@ -42,10 +42,10 @@ int main(int argc, char* argv[]) {
     std::vector<piMath::vec2> points;
     piMath::Model modelSystem;
     piMath::AudioSystem audioSystem;
-	piMath::Actor actor{ piMath::Transform{ piMath::vec2{ 640, 512 }, 0.0f, 1.0f }, new piMath::Model{ points, piMath::vec3{ 1,0,0 } } };
+	
 	// piMath::Transform transformSystem;
 
-    std::vector<piMath::vec2> morePoints{
+    std::vector<piMath::vec2> squarePoint{
         {-5,-5},
         { 5,-5},
         { 5, 5},
@@ -53,15 +53,16 @@ int main(int argc, char* argv[]) {
         {-5,-5}
     };
 
-    piMath::Model model{ morePoints, {0,0,1} };
+    piMath::Model model{ squarePoint, {0,0,1} };
 	
     piMath::Model* models = new piMath::Model{ points, piMath::vec3{ 0,0,1 } };
 
     std::vector<piMath::Actor> actors;
     for (int i = 0; i < 100; i++) {
     
-        std::vector<piMath::Actor> actors;
-        piMath::Transform transformSystem{ piMath::vec2{piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024}, 0.0f, 1.0f};
+       
+        piMath::Transform transformSystem{ piMath::vec2{piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024}, 0.0f, 2.0f};
+        piMath::Actor actor{transformSystem, new piMath::Model{ squarePoint, piMath::vec3{ 1,0,0 } } };
 		actors.push_back(actor);
     }
 
@@ -160,8 +161,10 @@ int main(int argc, char* argv[]) {
         newRenderer.SetColor(color.r,color.g,color.b);
         newRenderer.Clear();
 
-       for (auto actor : actors) {
+       for (auto& actor : actors) {
+		    newRenderer.SetColor(255.0f, 0.0f, 0.0f);
             actor.Draw(newRenderer);
+           
 	   }
 
 		if (inputSystem.GetMouseReleased(0)) {
