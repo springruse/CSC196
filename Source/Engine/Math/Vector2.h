@@ -6,7 +6,11 @@ namespace piMath {
 	template<typename T>
 	struct Vector2
 	{
-		T x, y;
+
+		union {
+			struct { T x, y; };
+			struct { T x, y; };
+		};
 
 		Vector2() = default;
 		Vector2(T x, T y) : x(x), y(y) {};
@@ -57,7 +61,26 @@ namespace piMath {
 		float Length() const{
 			return piMath::Math::sqrtf(LengthSqr());
 		}
+		/// <summary>
+		/// returns a normalized unit length version of the vector
+		/// </summary>
+		/// <returns></returns>
+		Vector2 Normalize() const {
+			return *this / Length();
+		}
 
+		/// <summary>
+		/// calculate angle in radians between positive x-axis and the point
+		/// </summary>
+		/// <returns></returns>
+		float Angle() const { return Math::atan2f(y, x); };
+
+		Vector2 Rotate(float radians) const {
+			Vector2 v;
+			v.x = x * Math::cosf(radians) - y * Math::sinf(radians);
+			v.y = x * Math::sinf(radians) + y * Math::cosf(radians);
+			return v;
+		};
 	};
 
 	using ivec2 = Vector2<int>;

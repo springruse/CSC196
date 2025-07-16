@@ -2,9 +2,12 @@
 #include <Renderer/Renderer.h>
 #include <Math/Math.h>
 #include <Math/Vector2.h>
+#include <Math/Vector3.h>
 #include <Core/Time.h>
 #include <Input/InputSystem.h>
 #include <Audio/AudioSystem.h>
+#include <Renderer/Model.h>
+#include <Game/Actor.h>
 
 //#include <fmod.hpp>
 //#include <SDL3/SDL.h>
@@ -30,20 +33,42 @@
 
 
 int main(int argc, char* argv[]) {
+    
+
+    //initialize stuff here
     piMath::Time time;
     piMath::Renderer newRenderer;
 	piMath::InputSystem inputSystem;
     std::vector<piMath::vec2> points;
+    piMath::Model modelSystem;
+    piMath::AudioSystem audioSystem;
+	piMath::Actor actor{ piMath::Transform{ piMath::vec2{ 640, 512 }, 0.0f, 1.0f }, new piMath::Model{ points, piMath::vec3{ 1,0,0 } } };
+	// piMath::Transform transformSystem;
+
+    std::vector<piMath::vec2> morePoints{
+        {-5,-5},
+        { 5,-5},
+        { 5, 5},
+        {-5, 5},
+        {-5,-5}
+    };
+
+    piMath::Model model{ morePoints, {0,0,1} };
+	
+    piMath::Model* models = new piMath::Model{ points, piMath::vec3{ 0,0,1 } };
+
+    std::vector<piMath::Actor> actors;
+    for (int i = 0; i < 100; i++) {
+    
+        std::vector<piMath::Actor> actors;
+        piMath::Transform transformSystem{ piMath::vec2{piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024}, 0.0f, 1.0f};
+		actors.push_back(actor);
+    }
 
 	newRenderer.Initialize();
-    newRenderer.CreateWindow("SDL3 Project", 1280, 1024);
+    newRenderer.CreateWindow("Game project", 1280, 1024);
 	inputSystem.Initialize();
-
-
-    // create audio system
-    piMath::AudioSystem audioSystem;
     audioSystem.Initialize();
-
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Event e;
@@ -57,7 +82,7 @@ int main(int argc, char* argv[]) {
         stars.push_back(piMath::vec2{ piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024 }); // use curly for constructors
     }
 
-    // play a sound before loop starts
+    // add sounds before the loop begins
 
 	audioSystem.addSound("bass.wav", "bass");
 	audioSystem.addSound("snare.wav", "snare");
@@ -69,15 +94,19 @@ int main(int argc, char* argv[]) {
     //MAIN LOOP
     while (!quit) {
         time.Tick();
+        inputSystem.Update();
 
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT) {
                 quit = true;
             }
-        }
-		inputSystem.Update();
 
-        if (inputSystem.getKeyReleased(SDL_SCANCODE_A)) {
+            if (inputSystem.getKeyPressed(SDL_SCANCODE_ESCAPE)) {
+                quit = true;
+            }
+        }
+
+        /*if (inputSystem.getKeyReleased(SDL_SCANCODE_A)) {
 			std::cout << "A key pressed!" << std::endl;
         }
 
@@ -99,23 +128,47 @@ int main(int argc, char* argv[]) {
 		}
 		if (inputSystem.getKeyReleased(SDL_SCANCODE_K)) {
 			audioSystem.playSound("open-hat");
-		}
+		}*/
 
+		/*if (inputSystem.getKeyDown(SDL_SCANCODE_A)) { transformSystem.rotation -= piMath::Math::degToRad(90 * time.GetDeltaTime()); }
+        if (inputSystem.getKeyDown(SDL_SCANCODE_D)) { transformSystem.rotation += piMath::Math::degToRad(90 * time.GetDeltaTime()); }*/
+
+        float speed = 175;
+		piMath::vec2 direction{ 0,0 };
+
+        if (inputSystem.getKeyDown(SDL_SCANCODE_W))  direction.y -= 100; /*time.GetDeltaTime(); };*/
+        if (inputSystem.getKeyDown(SDL_SCANCODE_A))  direction.x -= 100; /*time.GetDeltaTime(); };*/
+        if (inputSystem.getKeyDown(SDL_SCANCODE_S))  direction.y += 100; /*time.GetDeltaTime(); };*/
+        if (inputSystem.getKeyDown(SDL_SCANCODE_D))  direction.x += 100; /*time.GetDeltaTime(); };*/
+
+        if (direction.LengthSqr() > 0) {
+            direction = direction.Normalize();
+
+            for (auto actor : actors) {
+                actor.GetTransform().position += (direction * speed * time.GetDeltaTime());
+            }
+
+            /*transformSystem.position += (direction * speed * time.GetDeltaTime());*/
+			
+        }
+        
 		audioSystem.Update();
-		//std::cout << "Time: " << time.GetTime() << std::endl;
-		//std::cout << "Delta Time: " << time.GetDeltaTime() << std::endl;
 
+        // draw stuff
 
-		/*piMath::vec2 mouse = inputSystem.getMousePosition();
-		std::cout << mouse.x << ", " << mouse.y << std::endl;*/
-
-        newRenderer.SetColor(0,0,0);
+        piMath::vec3 color{ 0, 0, 0 };
+        newRenderer.SetColor(color.r,color.g,color.b);
         newRenderer.Clear();
+
+       for (auto actor : actors) {
+            actor.Draw(newRenderer);
+	   }
 
 		if (inputSystem.GetMouseReleased(0)) {
             points.push_back(inputSystem.getMousePosition());
 		}
 
+        // line drawing below
         if (inputSystem.getMouseButtonDown(0)) {
             piMath::vec2 position = inputSystem.getMousePosition();
             if (points.empty()) points.push_back(position);
@@ -124,35 +177,12 @@ int main(int argc, char* argv[]) {
 
         for (int i = 0; i < (int)points.size() - 1; i++) {
             // set color so we can see what we drew
-			newRenderer.SetColor(255,255,255);
+			newRenderer.SetColor(255.0f,255.0f,255.0f);
             newRenderer.DrawLine(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
         }
 
-
-   //     for (auto& star : stars) {
-   //         star += speed / time.GetDeltaTime();
-
-   //         if (star[0] > 1280) {
-   //             star[0] = 0;
-   //         }
-			//if (star[0] < 0) {
-			//	star[0] = 1024;
-			//}
-
-   //         newRenderer.SetColor(piMath::Random::getRandomInt(256), piMath::Random::getRandomInt(256), piMath::Random::getRandomInt(256));
-   //         newRenderer.DrawPoint(star.x, star.y); // Draw the star
-   //    
-   //     }
-
-		//for (int i = 0; i < 100; ++i) { // Draw 100 lines per frame
-  //          newRenderer.SetColor(piMath::Random::getRandomInt(0, 255), piMath::Random::getRandomInt(0, 255), piMath::Random::getRandomInt(0, 255), 255);
-  //          newRenderer.DrawLine(piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024, piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024);
-  //          newRenderer.Present();
-		//}
-
-        
         newRenderer.Present();
-
+        
     }
     
 	newRenderer.Shutdown();
