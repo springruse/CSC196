@@ -24,8 +24,8 @@
     <Filter Include="Source\Audio">
       <UniqueIdentifier>{4032553c-3aa1-4cbc-80d2-55808927b4ad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Game">
-      <UniqueIdentifier>{56877a9d-174a-48d0-9abe-22f700ce1efb}</UniqueIdentifier>
+    <Filter Include="Source\EngineGame">
+      <UniqueIdentifier>{2c7fb709-5843-4afe-af3d-e2cd16443d95}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -47,8 +47,14 @@
     <ClCompile Include="Renderer\Model.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Actor.cpp">
-      <Filter>Source\Game</Filter>
+    <ClCompile Include="EngineGame\Actor.cpp">
+      <Filter>Source\EngineGame</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineGame\Scene.cpp">
+      <Filter>Source\EngineGame</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineGame\Game.cpp">
+      <Filter>Source\EngineGame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -88,8 +94,17 @@
     <ClInclude Include="Math\Transform.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Actor.h">
-      <Filter>Source\Game</Filter>
+    <ClInclude Include="EngineGame\Actor.h">
+      <Filter>Source\EngineGame</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineGame\Scene.h">
+      <Filter>Source\EngineGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineGame\Game.h">
+      <Filter>Source\EngineGame</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
