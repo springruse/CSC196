@@ -21,35 +21,15 @@
 
 int main(int argc, char* argv[]) {
     
-
+    //make pointers here
+    std::unique_ptr<SpaceGame> game = std::make_unique<SpaceGame>();
 
     //initialize stuff here
     
 	piMath::GetEngine().Initialize();
-	std::unique_ptr<SpaceGame> game = std::make_unique<SpaceGame>();
+	game->Initialize();
 
-    std::vector<piMath::vec2> points; // has no actual points
 	piMath::Scene scene;
-
-    
-	
-    piMath::Model* models = new piMath::Model{ points, piMath::vec3{ 0,0,1 } };
-
-    std::vector<piMath::Actor> actors;
-    for (int i = 0; i < 100; i++) {
-       
-        piMath::Transform transformSystem{ piMath::vec2{piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024}, 0.0f, 2.0f};
-        std::shared_ptr<piMath::Actor> actor = std::make_shared<piMath::Actor>(transformSystem, newModel );
-		std::unique_ptr<Player> player = std::make_unique<Player>(transformSystem, newModel);
-		scene.addActor(actor);
-    }
-
-
-	piMath::GetEngine().GetRenderer().Initialize();
-    piMath::GetEngine().GetRenderer().CreateWindow("Game project", 1280, 1024);
-	piMath::GetEngine().GetInput().Initialize();
-    piMath::GetEngine().GetAudio().Initialize();
-    SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Event e;
     bool quit = false;
@@ -69,7 +49,6 @@ int main(int argc, char* argv[]) {
     piMath::GetEngine().GetAudio().addSound("clap.wav", "clap");
     piMath::GetEngine().GetAudio().addSound("close-hat.wav", "close-hat");
     piMath::GetEngine().GetAudio().addSound("open-hat.wav", "open-hat");
-    
 
     //MAIN LOOP
     while (!quit) {
@@ -107,38 +86,10 @@ int main(int argc, char* argv[]) {
         piMath::vec3 color{ 0, 0, 0 };
         piMath::GetEngine().GetRenderer().SetColor(color.r, color.g, color.b);
         piMath::GetEngine().GetRenderer().Clear();
-		scene.Draw(piMath::GetEngine().GetRenderer()); // uses *
-
-       for (auto& actor : actors) {
-		    piMath::GetEngine().GetRenderer().SetColor(255.0f, 0.0f, 0.0f);
-            actor.Draw(piMath::GetEngine().GetRenderer()); // uses *
-	   }
-
-		if (piMath::GetEngine().GetInput().GetMouseReleased(0)) {
-            points.push_back(piMath::GetEngine().GetInput().getMousePosition());
-		}
-
-        // line drawing below
-        if (piMath::GetEngine().GetInput().getMouseButtonDown(0)) {
-            piMath::vec2 position = piMath::GetEngine().GetInput().getMousePosition();
-            if (points.empty()) points.push_back(position);
-            else if ((position - points.back()).Length() > 10) points.push_back(position);
-        }
-
-        for (int i = 0; i < (int)points.size() - 1; i++) {
-            // set color so we can see what we drew
-            piMath::GetEngine().GetRenderer().SetColor(255.0f,255.0f,255.0f);
-            piMath::GetEngine().GetRenderer().DrawLine(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
-        }
-
+		game->Draw(); // uses *
         piMath::GetEngine().GetRenderer().Present();
-        
     }
-    
-	delete models;
 
-    piMath::GetEngine().GetAudio().Shutdown();
-    piMath::GetEngine().GetRenderer().Shutdown();
-    
+    piMath::GetEngine().Shutdown();
     return 0;
 }

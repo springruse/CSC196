@@ -20,7 +20,12 @@ namespace piMath {
 
 		void Clear();
 		void Present();
+
+		int getWidth() const { return m_width; }
+		int getHeight() const { return m_height; }
 	private:
+		int m_width = { 0 };
+		int m_height = { 0 };
 		SDL_Window* m_window = nullptr;
 		SDL_Renderer* m_renderer = nullptr;
 	};
