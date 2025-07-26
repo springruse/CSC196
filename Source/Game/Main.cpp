@@ -11,7 +11,9 @@
 #include "EngineGame/Scene.h"
 #include "Game/Player.h" 
 #include "Game/SpaceGame.h"
+#include "Renderer/Font.h"
 #include "Engine.h"
+#include "Renderer/Text.h"
 
 #include <memory>
 #include <random>
@@ -50,11 +52,21 @@ int main(int argc, char* argv[]) {
     piMath::GetEngine().GetAudio().addSound("close-hat.wav", "close-hat");
     piMath::GetEngine().GetAudio().addSound("open-hat.wav", "open-hat");
 
+	piMath::Font* font = new piMath::Font();
+	font->Load("CFSpaceship-Regular.ttf", 24); // Load a font with size 24
+	
+    piMath::Text* text = new piMath::Text(font);
+    text->Create(piMath::GetEngine().GetRenderer(), "Hello World", piMath::vec3{1.0f, 1.0f, 1.0f});
+    text->Draw(piMath::GetEngine().GetRenderer(), 40.0f, 40.0f);
+
+
     //MAIN LOOP
     while (!quit) {
+        
 		piMath::GetEngine().GetTime().Tick();
         piMath::GetEngine().GetInput().Update();
 		piMath::GetEngine().GetAudio().Update();
+
 
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT) {
@@ -82,14 +94,17 @@ int main(int argc, char* argv[]) {
         if (inputSystem.getKeyDown(SDL_SCANCODE_D)) { transformSystem.rotation += piMath::Math::degToRad(90 * time.GetDeltaTime()); }*/
         
         // draw stuff
-
-        piMath::vec3 color{ 0, 0, 0 };
-        piMath::GetEngine().GetRenderer().SetColor(color.r, color.g, color.b);
+        piMath::GetEngine().GetRenderer().SetColor(0.0f, 0.0f, 0.0f); // Set background color to black
         piMath::GetEngine().GetRenderer().Clear();
+        text->Draw(piMath::GetEngine().GetRenderer(), 40.0f, 40.0f);
 		game->Draw(); // uses *
+        game->Update();
+        
         piMath::GetEngine().GetRenderer().Present();
+       
+        
     }
-
+	game->Shutdown();
     piMath::GetEngine().Shutdown();
     return 0;
 }

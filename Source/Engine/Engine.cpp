@@ -19,11 +19,6 @@ namespace piMath {
 		m_audio->Update();
 	}
 
-	void Engine::Draw()
-	{
-		//
-	}
-
 	bool piMath::Engine::Initialize()
 	{
 		m_renderer = std::make_unique<piMath::Renderer>();

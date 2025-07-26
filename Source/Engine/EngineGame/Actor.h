@@ -1,6 +1,7 @@
 #pragma once
 #include "../Math/Transform.h"
 #include "../Renderer/Model.h"
+#include <string>
 #include <memory>
 
 
@@ -23,9 +24,14 @@ namespace piMath {
 		void SetTransform(const Transform& transform) {
 			m_transform = transform;
 		}
-
-	protected:
+		std::string name;
+		std::string tag;
 		Transform m_transform;
+		class Scene* m_scene = nullptr;
+	protected:
+		
 		std::shared_ptr<Model> m_model;
+		vec2 velocity{ 0,0 };
+		float damping = 0.98f; // Damping factor to reduce velocity over time
 	};
 }

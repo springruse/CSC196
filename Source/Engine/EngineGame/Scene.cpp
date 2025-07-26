@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Actor.h"
+#include "../Core/StringHelper.h"
 #include "../Renderer/Renderer.h"
 
 namespace piMath {
@@ -26,7 +27,16 @@ namespace piMath {
 	/// Adds an actor to the scene.
 	/// </summary>
 	/// <param name="actor">A shared pointer to the actor to be added to the scene.</param>
-	void Scene::addActor(std::shared_ptr<Actor> actor) {
+	void Scene::AddActor(std::shared_ptr<Actor> actor) {
+		actor->m_scene = this; // Set the scene for the actor
 		m_actors.push_back(actor);
+	}
+
+	Actor* Scene::GetActorByName(const std::string& name) {
+		for (auto& actor : m_actors) {
+			if (toLower(actor->name) == toLower(name)) {
+				return actor.get();
+			}
+		}
 	}
 }

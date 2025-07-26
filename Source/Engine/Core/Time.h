@@ -8,7 +8,7 @@ namespace piMath {
 	public:
 		Time() {
 			m_startTime = clock::now();
-			m_startTime = clock::now();
+			m_frameTime = clock::now();
 		}
 
 		void Tick();
