@@ -1,14 +1,14 @@
 #include "Enemy.h"
 #include "Engine.h"
+#include "Player.h"
 #include "EngineGame/Scene.h"
 #include "Renderer/Renderer.h"
 #include <EngineGame/Game.h>
 
 void Enemy::Update(float deltaTime)
 {
-	float speed = 10.0f;
 
-	Actor* player = m_scene->GetActorByName("player");
+	Player* player = m_scene->GetActorByName<Player>("player");
 
 	if (player) {
 		direction = player -> m_transform.position - m_transform.position;
@@ -16,7 +16,7 @@ void Enemy::Update(float deltaTime)
 		m_transform.rotation = piMath::Math::radToDeg(direction.Angle());
 	}
 
-	piMath::vec2 force = direction.Rotate(m_transform.rotation) * speed * deltaTime;
+	piMath::vec2 force = direction * speed;
 	velocity += force;
 
 	Actor::Update(deltaTime);

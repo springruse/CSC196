@@ -10,7 +10,7 @@ public:
 	{}
 
 	void Update(float deltaTime) override;
-	float damping = 1.0f;
+	float damping = 0.98f;
 	float speed = 100;
 	piMath::vec2 direction = { 0,0 };
 private:

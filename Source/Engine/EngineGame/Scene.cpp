@@ -32,11 +32,9 @@ namespace piMath {
 		m_actors.push_back(actor);
 	}
 
-	Actor* Scene::GetActorByName(const std::string& name) {
-		for (auto& actor : m_actors) {
-			if (toLower(actor->name) == toLower(name)) {
-				return actor.get();
-			}
-		}
+	void Scene::RemoveAllActors() 
+	{
+		m_actors.clear(); // Clear all actors from the scene
 	}
+
 }

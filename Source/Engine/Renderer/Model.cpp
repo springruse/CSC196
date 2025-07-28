@@ -13,7 +13,7 @@ namespace piMath {
 		
 		for (int i = 0; i < m_points.size() - 1; i++) {
 			vec2 point1 = (m_points[i].Rotate(piMath::Math::degToRad(rotation)) * scale) + position;
-			vec2 point2 = (m_points[i + 1].Rotate(rotation) * scale) + position;
+			vec2 point2 = (m_points[i + 1].Rotate(piMath::Math::degToRad(rotation)) * scale) + position;
 
 			renderer.DrawLine(point1.x, point1.y, point2.x, point2.y);
 ;		}

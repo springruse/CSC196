@@ -1,3 +1,4 @@
+
 #include <Core/Random.h>
 #include <Renderer/Renderer.h>
 #include <Math/Math.h>
@@ -21,8 +22,12 @@
 
 #include <iostream>
 
+
+
 int main(int argc, char* argv[]) {
+
     
+
     //make pointers here
     std::unique_ptr<SpaceGame> game = std::make_unique<SpaceGame>();
 
@@ -98,12 +103,13 @@ int main(int argc, char* argv[]) {
         piMath::GetEngine().GetRenderer().Clear();
         text->Draw(piMath::GetEngine().GetRenderer(), 40.0f, 40.0f);
 		game->Draw(); // uses *
-        game->Update();
+        game->Update(piMath::GetEngine().GetTime().GetDeltaTime());
         
         piMath::GetEngine().GetRenderer().Present();
        
         
     }
+
 	game->Shutdown();
     piMath::GetEngine().Shutdown();
     return 0;

@@ -27,11 +27,13 @@ namespace piMath {
 		std::string name;
 		std::string tag;
 		Transform m_transform;
+		vec2 velocity{ 0,0 };
 		class Scene* m_scene = nullptr;
+
 	protected:
 		
 		std::shared_ptr<Model> m_model;
-		vec2 velocity{ 0,0 };
+		
 		float damping = 0.98f; // Damping factor to reduce velocity over time
 	};
 }

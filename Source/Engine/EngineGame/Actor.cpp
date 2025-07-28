@@ -7,7 +7,7 @@ namespace piMath {
 	void piMath::Actor::Update(float deltaTime)
 	{
 		m_transform.position += velocity * deltaTime;
-		velocity *= (1.0f / damping);
+		velocity *= (1.0f * damping);
 	}
 
 	void piMath::Actor::Draw(Renderer& renderer)

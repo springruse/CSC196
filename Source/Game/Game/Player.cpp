@@ -20,9 +20,11 @@ void Player::Update(float dt)
 	if (piMath::GetEngine().GetInput().getKeyDown(SDL_SCANCODE_W))  thrust = +1;
 	if (piMath::GetEngine().GetInput().getKeyDown(SDL_SCANCODE_S))  thrust = -1;
 
-	piMath::vec2 force = direction.Rotate(m_transform.rotation) * thrust * speed * dt;
+	piMath::vec2 force = direction.Rotate(piMath::Math::degToRad(m_transform.rotation)) * thrust * speed;
 	velocity += force;
 	
+
+
 	Actor::Update(dt);
 
 }
