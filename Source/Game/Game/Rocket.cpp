@@ -1,23 +1,35 @@
-//#include "Rocket.h"
-//#include <vector>
-////unfinished but is similar to enemy.cpp
-//
-//void Rocket::Update(float deltaTime)
-//{
-//	float speed = 10.0f;
-//
-//
-//	if (player) {
-//		direction = player->m_transform.position - m_transform.position;
-//		direction = direction.Normalize();
-//		m_transform.rotation = piMath::Math::radToDeg(direction.Angle());
-//	}
-//
-//	piMath::vec2 force = direction.Rotate(m_transform.rotation) * speed * deltaTime;
-//	velocity += force;
-//
-//	Actor::Update(deltaTime);
-//
-//	//m_transform.position.x = piMath::Math::wrap(m_transform.position.x, 0.0f, 0.0f);
-//	//m_transform.position.y = piMath::Math::wrap(m_transform.position.y, 0.0f, 1024.0f);
-//}
+#include "Rocket.h"
+#include "EngineGame/Actor.h"
+#include "Core/Random.h"
+#include "Renderer/ParticleSystem.h"
+#include <vector>
+//unfinished but is similar to enemy.cpp
+
+void Rocket::Update(float deltaTime)
+{
+	piMath::vec2 force = piMath::vec2{ 1,0 }.Rotate(piMath::Math::degToRad(m_transform.rotation)) * speed;
+	velocity += force;
+
+	m_transform.position.x = piMath::Math::Wrap(m_transform.position.x, 0.0f, (float) piMath::GetEngine().GetRenderer().getWidth());
+	m_transform.position.y = piMath::Math::Wrap(m_transform.position.y, 0.0f, (float) piMath::GetEngine().GetRenderer().getHeight());
+
+	float angle = m_transform.rotation + piMath::Random::getReal(-30.0f, 30.0f);
+	piMath::vec2 velocity = piMath::vec2{ 1,0 }.Rotate(piMath::Math::degToRad(angle));
+	velocity += piMath::Random::getReal(100.0f, 200.0f);
+	
+	piMath::Particle particle;
+	particle.position = m_transform.position;
+	particle.color = (tag == "enemy") ? piMath::vec3{ 1,0,0 } : piMath::vec3{ 1,1,1 };
+	particle.velocity = piMath::vec2{ piMath::Random::onUnitCircle() * piMath::Random::getReal(50.0f, 80.0f) };
+	particle.lifeSpan = piMath::Random::getReal(0.5f,0.15f);
+	piMath::GetEngine().GetParticleSystem().AddParticle(particle);
+
+	Actor::Update(deltaTime);
+}
+
+void Rocket::onCollision(Actor* other)
+{
+	if (tag != other->tag) {
+		destroyed = true; // Destroy the rocket on collision with any other actor
+	}
+}

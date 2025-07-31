@@ -2,6 +2,8 @@
 #include "Renderer/Renderer.h"
 #include "Audio/AudioSystem.h"
 #include "Input/InputSystem.h"
+#include "Renderer/ParticleSystem.h"
+#include "Core/Time.h"
 #pragma once
 
 namespace piMath {
@@ -17,6 +19,7 @@ namespace piMath {
 		m_time.Tick();
 		m_input->Update();
 		m_audio->Update();
+		m_particleSystem->Update(m_time.GetDeltaTime());
 	}
 
 	bool piMath::Engine::Initialize()
@@ -31,7 +34,8 @@ namespace piMath {
 		m_audio = std::make_unique<piMath::AudioSystem>();
 		m_audio->Initialize();
 
-		
+		m_particleSystem = std::make_unique<piMath::ParticleSystem>();
+		m_particleSystem->Initialize(5000);
 
 		return true;
 	}
@@ -39,6 +43,7 @@ namespace piMath {
 	void piMath::Engine::Shutdown()
 	{
 		m_audio->Shutdown();
+		m_particleSystem->Shutdown();
 		m_input->Shutdown();
 		m_renderer->Shutdown();
 	}

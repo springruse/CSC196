@@ -22,9 +22,12 @@ namespace piMath {
 		float GetDeltaTime() const {
 			return m_deltaTime;
 		}
+
+		void setTimeScale(float timeScale) { m_timeScale = timeScale; }
 	private:
 		float m_time = 0;
 		float m_deltaTime = 0;
+		float m_timeScale = 1;
 		clock::time_point m_startTime;
 		clock::time_point m_frameTime;
 	};

@@ -10,6 +10,9 @@
 #include "Renderer/Renderer.h"
 #include "EngineGame/Actor.h"
 #include "Input/InputSystem.h"
+#include "Renderer/ParticleSystem.h"
+#include "Renderer/Font.h"
+#include "Renderer/Text.h"
 #include "GameData.h"
 #include "Enemy.h"
 #include "Engine.h"
@@ -19,7 +22,17 @@
 bool SpaceGame::Initialize()
 {
  
-	m_scene = std::make_unique<piMath::Scene>();
+	m_scene = std::make_unique<piMath::Scene>(this);
+
+    m_titleFont = std::make_shared<piMath::Font>();
+	m_titleFont->Load("CFSpaceship-Regular.ttf", 24);
+
+	m_uiFont = std::make_shared<piMath::Font>();
+    m_uiFont->Load("CFSpaceship-Regular.ttf", 24);
+
+	m_titleText = std::make_shared<piMath::Text>(m_titleFont);
+	m_scoreText = std::make_shared<piMath::Text>(m_uiFont);
+	m_livesText = std::make_shared<piMath::Text>(m_uiFont);
     
 
     std::shared_ptr<piMath::Model> newModel = std::make_shared<piMath::Model>(GameData::squarePoint, piMath::vec3{ 0,0,1 });
@@ -39,23 +52,6 @@ bool SpaceGame::Initialize()
 
 	m_scene->AddActor(player); // add the player
 
-	for (int i = 0; i < 10; i++) { // make enemies
-        piMath::Transform transform{ piMath::vec2{ piMath::Random::getRandomFloat() * piMath::GetEngine().GetRenderer().getHeight(), piMath::Random::getRandomFloat() * piMath::GetEngine().GetRenderer().getHeight() }, 0, 10};
-        std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>(transform, EnemyModel);
-        enemy->damping = 0.98f;
-		enemy->speed = piMath::Random::getRandomFloat() * 10.0f + 1.0f; // Random speed between 100 and 7000
-        enemy->tag = "enemy"; // Set enemy name for identification
-		enemy->name = "enemy"; // Set enemy name for identification
-        m_scene->AddActor(std::move(enemy));
-    }
-
-    /*for (int i = 0; i < 100; i++) {
-
-        piMath::Transform transformSystem{ piMath::vec2{piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024}, 0.0f, 2.0f };
-        std::shared_ptr<piMath::Actor> actor = std::make_shared<piMath::Actor>(transformSystem, newModel);
-        std::unique_ptr<Player> player = std::make_unique<Player>(transformSystem, newModel);
-        m_scene->addActor(actor);
-    }*/
     return true;
 }
 
@@ -68,43 +64,107 @@ void SpaceGame::Update(float dt)
 {
     switch (m_gameState)
     {
-        case GameState::Init:
-			m_gameState = GameState::Title; // Transition to Title state
+        case SpaceGame::GameState::Init:
+			m_gameState = SpaceGame::GameState::Title; // Transition to Title state, change later when debugging is done
             break;
-        case GameState::Title:
+        case SpaceGame::GameState::Title:
             if (piMath::GetEngine().GetInput().getKeyPressed(SDL_SCANCODE_SPACE)) {
-				m_gameState = GameState::StartGame; // Transition to StartGame state
+				m_gameState = SpaceGame::GameState::StartGame; // Transition to StartGame state
             }
             break;
-        case GameState::StartGame:
+        case SpaceGame::GameState::StartGame:
             m_score = 0;
             m_lives = 3;
-			m_gameState = GameState::StartRound; // Transition to StartRound state
+            m_enemySpawnTimer = 0;
+			m_gameState = SpaceGame::GameState::Game;
             break;
-        case GameState::Game:
+        case SpaceGame::GameState::Game:
 			m_enemySpawnTimer -= dt;
             if (m_enemySpawnTimer <= 0.0f) {
 				m_enemySpawnTimer = 3.0f; // Reset the timer
+				spawnEnemy(); // Spawn enemies
             }
+
+
             break;
-        case GameState::PlayerDead:
+
+		case SpaceGame::GameState::StartRound:
+			m_scene->RemoveAllActors(); // Clear the scene for a new round
+            break;
+
+        case SpaceGame::GameState::PlayerDead:
+			m_stateTimer -= dt;
             m_lives--;
-            if (m_lives == 0) m_gameState = GameState::GameOver;
+            if (m_lives == 0) m_gameState = SpaceGame::GameState::GameOver;
+                
             else{
-                m_gameState = GameState::StartRound; // Transition to StartRound state
+                m_gameState = SpaceGame::GameState::StartRound; // Transition to StartRound state
 			}
             break;
-        case GameState::GameOver:
-            
+        case SpaceGame::GameState::GameOver:
+			m_stateTimer -= dt;
+
+            if (m_stateTimer <= 0.0f) {
+                m_gameState = GameState::Title; // Transition back to Title state
+			}
             break;
 
 	}
+
+    if (piMath::GetEngine().GetInput().getKeyDown(SDL_SCANCODE_X)) {
+        piMath::GetEngine().GetTime().setTimeScale(0.5);
+    }
+
 	m_scene->Update(piMath::GetEngine().GetTime().GetDeltaTime());
 }
 
-void SpaceGame::Draw()
+void SpaceGame::Draw(piMath::Renderer& renderer)
 {
-    m_scene->Draw(piMath::GetEngine().GetRenderer());
+
+    if (m_gameState == GameState::Title) {
+        m_titleText->Create(renderer,"piMath", piMath::vec3{ 0,0.25,0.25 });
+        m_scene->Draw(renderer);
+    }
+    if (m_gameState == GameState::GameOver) {
+        m_titleText->Create(renderer,"Game Over!", piMath::vec3{0,0.25,0.25});
+        m_scene->Draw(renderer);
+    }
+
+    m_scoreText->Create(renderer, "SCORE: " + std::to_string(m_score), {1,1,1});
+	m_scoreText->Draw(renderer, 20.0f, 20.0f);
+
+    m_livesText->Create(renderer, "LIVES: " + std::to_string(m_score), {1,1,1});
+	m_livesText->Draw(renderer, (float)(renderer.getWidth() - 200), (float)20.0f);
+
+    m_scene->Draw(renderer);
+    piMath::GetEngine().GetParticleSystem().Draw(renderer);
+}
+
+void SpaceGame::OnPlayerDeath()
+{
+	m_gameState = GameState::PlayerDead; // Transition to PlayerDead state
+	m_stateTimer = 2.0f; 
+}
+
+void SpaceGame::spawnEnemy()
+{
+    Player* player = m_scene->GetActorByName<Player>("player");
+ 
+        if (player) {
+            std::shared_ptr<piMath::Model> EnemyModel = std::make_shared<piMath::Model>(GameData::enemyShipPoints, piMath::vec3{ 1,0,0 }); // Create a new enemy model
+
+			piMath::vec2 playerPosition = player->m_transform.position + piMath::Random::onUnitCircle() * piMath::Random::getReal(100.0f, 200.0f);
+            piMath::Transform transform{playerPosition, piMath::Random::getReal(0.0f, 360.0f), 10};
+
+            std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>(transform, EnemyModel);
+            enemy->damping = 0.98f;
+            enemy->speed = piMath::Random::getReal() * 3.0f + 1.0f; // Random speed between 3 and 1
+            enemy->tag = "enemy"; // Set enemy name for identification
+            enemy->name = "enemy"; // Set enemy name for identification
+            enemy->firetimer = 3.0f; // Initialize fire timer
+            enemy->fireTime = 5.0f; // Set time between shots in seconds
+            m_scene->AddActor(std::move(enemy));
+        }
 }
 
 

@@ -81,6 +81,46 @@ namespace piMath {
 			v.y = x * Math::sinf(radians) + y * Math::cosf(radians);
 			return v;
 		};
+
+		/// <summary>
+		/// Calculates the dot product of two 2D vectors.
+		/// </summary>
+		/// <param name="a">The first 2D vector.</param>
+		/// <param name="b">The second 2D vector.</param>
+		/// <returns>The dot product of the two vectors as a float.</returns>
+		static float Dot(const Vector2& a, const Vector2& b) {
+			return a.x * b.x + a.y * b.y;
+		}
+		/// <summary>
+		/// Calculates the angle in radians between two 2D vectors.
+		/// </summary>
+		/// <param name="a">The first 2D vector.</param>
+		/// <param name="b">The second 2D vector.</param>
+		/// <returns>The angle in radians between vectors a and b.</returns>
+		static float AngleBetween(const Vector2& a, const Vector2& b) {
+			return Math::acosf(Dot(a,b));
+		}
+
+		/// <summary>
+		/// Calculates the signed angle in radians between two 2D vectors.
+		/// </summary>
+		/// <param name="a">The first 2D vector.</param>
+		/// <param name="b">The second 2D vector.</param>
+		/// <returns>The signed angle in radians from vector 'a' to vector 'b'. The sign indicates the direction of rotation.</returns>
+		static float SignedAngleBetween(const Vector2& a, const Vector2& b) {
+			Vector2 v{ Dot(a,b) , Cross(a,b) };
+			return v.Angle();
+		}
+
+		/// <summary>
+		/// Computes the 2D cross product (scalar) of two vectors.
+		/// </summary>
+		/// <param name="a">The first 2D vector operand.</param>
+		/// <param name="b">The second 2D vector operand.</param>
+		/// <returns>The scalar value representing the magnitude of the 2D cross product of vectors a and b.</returns>
+		static float Cross(const Vector2& a, const Vector2& b) {
+			return a.x * b.y - a.y * b.x;
+		}
 	};
 
 	using ivec2 = Vector2<int>;

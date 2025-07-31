@@ -15,6 +15,8 @@
 #include "Renderer/Font.h"
 #include "Engine.h"
 #include "Renderer/Text.h"
+#include "Core/File.h"
+#include "Renderer/ParticleSystem.h"
 
 #include <memory>
 #include <random>
@@ -26,7 +28,45 @@
 
 int main(int argc, char* argv[]) {
 
-    
+    // Get current directory path
+    std::cout << "Directory Operations:\n";
+    std::cout << "Current directory: " << piMath::file::GetCurrentDirectory() << "\n";
+
+    // Set current directory path (current path + "Assets")
+    std::cout << "Setting directory to 'Assets'...\n";
+    piMath::file::SetCurrentDirectory("Assets");
+    std::cout << "New directory: " << piMath::file::GetCurrentDirectory() << "\n\n";
+
+    // Get filenames in the current directory
+    std::cout << "Files in Directory:\n";
+    auto filenames = piMath::file::GetFilesInDirectory(piMath::file::GetCurrentDirectory());
+    for (const auto& filename : filenames) {
+        std::cout << filename << "\n";
+    }
+    std::cout << "\n";
+
+    // Get filename (filename.extension) only
+    if (!filenames.empty()) {
+        std::cout << "Path Analysis:\n";
+        std::string filename = piMath::file::GetFilename(filenames[0]);
+        std::cout << "Filename only: " << filename << "\n";
+
+        // Get extension only
+        std::string ext = piMath::file::GetExtension(filenames[0]);
+        std::cout << "Extension: " << ext << "\n\n";
+    }
+
+    // Read and display text file
+    std::cout << "Text File Reading:\n";
+    std::string str;
+    bool success = piMath::file::ReadTextFile("test.txt", str);
+    if (success) {
+        std::cout << "Contents of test.txt:\n";
+        std::cout << str << "\n";
+    }
+    else {
+        std::cout << "Failed to read test.txt\n";
+    }
 
     //make pointers here
     std::unique_ptr<SpaceGame> game = std::make_unique<SpaceGame>();
@@ -36,8 +76,6 @@ int main(int argc, char* argv[]) {
 	piMath::GetEngine().Initialize();
 	game->Initialize();
 
-	piMath::Scene scene;
-
     SDL_Event e;
     bool quit = false;
 
@@ -46,10 +84,11 @@ int main(int argc, char* argv[]) {
     std::vector<piMath::vec2> stars;
     for (int i = 0; i < 100; i++) {
        
-        stars.push_back(piMath::vec2{ piMath::Random::getRandomFloat() * 1280, piMath::Random::getRandomFloat() * 1024 }); // use curly for constructors
+        stars.push_back(piMath::vec2{ piMath::Random::getReal() * 1280, piMath::Random::getReal() * 1024 }); // use curly for constructors
     }
 
     // add sounds before the loop begins
+
 
 	piMath::GetEngine().GetAudio().addSound("bass.wav", "bass");
     piMath::GetEngine().GetAudio().addSound("snare.wav", "snare");
@@ -57,12 +96,6 @@ int main(int argc, char* argv[]) {
     piMath::GetEngine().GetAudio().addSound("close-hat.wav", "close-hat");
     piMath::GetEngine().GetAudio().addSound("open-hat.wav", "open-hat");
 
-	piMath::Font* font = new piMath::Font();
-	font->Load("CFSpaceship-Regular.ttf", 24); // Load a font with size 24
-	
-    piMath::Text* text = new piMath::Text(font);
-    text->Create(piMath::GetEngine().GetRenderer(), "Hello World", piMath::vec3{1.0f, 1.0f, 1.0f});
-    text->Draw(piMath::GetEngine().GetRenderer(), 40.0f, 40.0f);
 
 
     //MAIN LOOP
@@ -101,16 +134,16 @@ int main(int argc, char* argv[]) {
         // draw stuff
         piMath::GetEngine().GetRenderer().SetColor(0.0f, 0.0f, 0.0f); // Set background color to black
         piMath::GetEngine().GetRenderer().Clear();
-        text->Draw(piMath::GetEngine().GetRenderer(), 40.0f, 40.0f);
-		game->Draw(); // uses *
         game->Update(piMath::GetEngine().GetTime().GetDeltaTime());
+		game->Draw(piMath::GetEngine().GetRenderer()); // uses *
+        
         
         piMath::GetEngine().GetRenderer().Present();
        
-        
     }
 
 	game->Shutdown();
+    game.release();
     piMath::GetEngine().Shutdown();
     return 0;
 }

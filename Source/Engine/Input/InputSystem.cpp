@@ -33,8 +33,8 @@ namespace piMath {
 
 		uint32_t mouseButtonState = SDL_GetMouseState(&m_mousePosition.x, &m_mousePosition.y);
 
-		m_mouseButtonState[0] = mouseButtonState & SDL_BUTTON_LMASK;
-		m_mouseButtonState[1] = mouseButtonState & SDL_BUTTON_MMASK;
-		m_mouseButtonState[2] = mouseButtonState & SDL_BUTTON_RMASK;
+		m_mouseButtonState[0] = mouseButtonState & SDL_BUTTON_LMASK; // Left mouse button
+		m_mouseButtonState[1] = mouseButtonState & SDL_BUTTON_MMASK; // Middle mouse button
+		m_mouseButtonState[2] = mouseButtonState & SDL_BUTTON_RMASK; // Right mouse button
 	}
 }

@@ -1,7 +1,9 @@
 #pragma once
 #include "EngineGame/Game.h"
+#include "Renderer/font.h"
+#include "Renderer/text.h"
 
-class SpaceGame : piMath::Game {
+class SpaceGame : public piMath::Game {
 
 	public:
 		enum class GameState {
@@ -21,7 +23,9 @@ class SpaceGame : piMath::Game {
 		void Shutdown() override;
 
 		void Update(float dt) override;
-		void Draw() override;
+		void Draw(piMath::Renderer& renderer) override;
+
+		void OnPlayerDeath();
 
 		int m_score = 0; // Player's score
 		int m_lives = 0; // Player's lives
@@ -29,4 +33,14 @@ class SpaceGame : piMath::Game {
 	private:
 		GameState m_gameState = GameState::Init;
 		float m_enemySpawnTimer = 0.0f; // Timer for enemy spawning
+
+		float m_stateTimer = 0.0f; // Timer for state transitions
+
+		std::shared_ptr <class piMath::Font>  m_titleFont;
+		std::shared_ptr <class piMath::Font>  m_uiFont;
+		std::shared_ptr <class piMath::Text>  m_titleText;
+		std::shared_ptr <class piMath::Text>  m_scoreText;
+		std::shared_ptr <class piMath::Text>  m_livesText;
+	private:
+	void spawnEnemy();
 };

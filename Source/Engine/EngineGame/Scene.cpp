@@ -10,8 +10,31 @@ namespace piMath {
 	/// </summary>
 	/// <param name="dt">The time elapsed since the last update, in seconds.</param>
 	void Scene::Update(float dt) {
+		// Update each actor in the scene
 		for (auto& actor : m_actors) {
 			actor->Update(dt);
+		}
+		// remove destroyed actors
+		for (auto iterate = m_actors.begin(); iterate != m_actors.end();) {
+			if ((*iterate)->destroyed) {
+				m_actors.erase(iterate); // Remove actors that are no longer alive
+			}
+			else {
+				++iterate; // Move to the next actor
+			}
+		}
+		// Check for collisions between actors
+		for (auto& actorA : m_actors) {
+			for (auto& actorB : m_actors) {
+				if (actorA == actorB || (actorA->destroyed) || (actorB->destroyed)) continue;
+				float distance = (actorA->m_transform.position - actorB->m_transform.position).Length();
+
+				if (distance <= actorA->getRadius() + actorB->getRadius()){
+					actorA->onCollision(actorB.get()); // Notify actorA of collision with actorB
+					actorB->onCollision(actorA.get()); // Notify actorB of collision with actorA
+
+				}
+			}
 		}
 	}
 	/// <summary>

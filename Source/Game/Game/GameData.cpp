@@ -24,4 +24,11 @@ namespace GameData
        { -3, 3 },
        { 3, 0 },
     };
+
+    std::vector<piMath::vec2> rocketPoints{ // makes a rocket
+        { 0, -5 },  // Top point
+        { 2, 5 },   // Bottom right point
+        { -2, 5 },  // Bottom left point
+		{ 0, -5 }   // Closing the shape back to the top point
+	};
 }

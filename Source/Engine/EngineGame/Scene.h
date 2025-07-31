@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <list>
 #include "Actor.h"
 #include "../Core/StringHelper.h"
 
@@ -8,11 +9,13 @@
 namespace piMath {
 	
 	class Actor;
+	class Game;
+
 	class Scene {
 	public:
 		
 
-		Scene() = default;
+		Scene(Game* game) : m_game{ game } {}
 		
 		void Update(float dt);
 		void Draw(class Renderer& renderer);
@@ -27,11 +30,13 @@ namespace piMath {
 		template <typename T = Actor>
 		std::vector<T*> GetActorsByTag(const std::string& tag);
 
-
+		class Game* GetGame() {
+			return m_game; // Returns the game instance associated with the scene
+		}
 
 	private:
-		std::vector<std::shared_ptr<class Actor>> m_actors;
-
+		std::list<std::shared_ptr<class Actor>> m_actors;
+		class Game* m_game = nullptr; // Pointer to the game instance, if needed
 	};
 	/// <summary>
 	/// Retrieves a pointer to an actor of the specified type with the given name from the scene.
