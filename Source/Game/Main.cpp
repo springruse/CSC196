@@ -68,6 +68,38 @@ int main(int argc, char* argv[]) {
         std::cout << "Failed to read test.txt\n";
     }
 
+    std::cout << "Integer Functions:\n";
+    std::cout << "getInt(): " << piMath::Random::getInt() << "\n";
+    std::cout << "getInt(): " << piMath::Random::getInt() << "\n";
+    std::cout << "getInt(10): " << piMath::Random::getInt(10) << "\n";
+    std::cout << "getInt(10): " << piMath::Random::getInt(10) << "\n";
+    std::cout << "getInt(5, 15): " << piMath::Random::getInt(5, 15) << "\n";
+    std::cout << "getInt(5, 15): " << piMath::Random::getInt(5, 15) << "\n";
+    std::cout << "getInt(-10, 10): " << piMath::Random::getInt(-10, 10) << "\n\n";
+
+    // Test getReal() variants with float
+    std::cout << "Float Functions:\n";
+    std::cout << std::fixed << std::setprecision(6);
+    std::cout << "getReal<float>(): " << piMath::Random::getReal<float>() << "\n";
+    std::cout << "getReal<float>(): " << piMath::Random::getReal<float>() << "\n";
+    std::cout << "getReal<float>(5.0f): " << piMath::Random::getReal<float>(5.0f) << "\n";
+    std::cout << "getReal<float>(2.5f, 7.5f): " << piMath::Random::getReal<float>(2.5f, 7.5f) << "\n";
+    std::cout << "getReal<float>(-1.0f, 1.0f): " << piMath::Random::getReal<float>(-1.0f, 1.0f) << "\n\n";
+
+    // Test getReal() variants with double
+    std::cout << "Double Functions:\n";
+    std::cout << std::setprecision(10);
+    std::cout << "getReal<double>(): " << piMath::Random::getReal<double>() << "\n";
+    std::cout << "getReal<double>(100.0): " << piMath::Random::getReal<double>(100.0) << "\n";
+    std::cout << "getReal<double>(0.0, 2.0): " << piMath::Random::getReal<double>(0.0, 2.0) << "\n\n";
+
+    // Test getBool()
+    std::cout << "Boolean Functions:\n";
+    for (int i = 0; i < 10; ++i) {
+        std::cout << "getBool(): " << std::boolalpha << piMath::Random::getBool() << "\n";
+    }
+    std::cout << "\n";
+
     //make pointers here
     std::unique_ptr<SpaceGame> game = std::make_unique<SpaceGame>();
 
@@ -78,14 +110,6 @@ int main(int argc, char* argv[]) {
 
     SDL_Event e;
     bool quit = false;
-
-    // generate random stars that move
-    piMath::vec2 speed{ 0.1f, 0.0f };
-    std::vector<piMath::vec2> stars;
-    for (int i = 0; i < 100; i++) {
-       
-        stars.push_back(piMath::vec2{ piMath::Random::getReal() * 1280, piMath::Random::getReal() * 1024 }); // use curly for constructors
-    }
 
     // add sounds before the loop begins
 
