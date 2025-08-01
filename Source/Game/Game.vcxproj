@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Ally.cpp" />
     <ClCompile Include="Game\Enemy.cpp" />
     <ClCompile Include="Game\GameData.cpp" />
     <ClCompile Include="Game\Player.cpp" />
@@ -172,6 +173,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Ally.h" />
     <ClInclude Include="Game\Enemy.h" />
     <ClInclude Include="Game\GameData.h" />
     <ClInclude Include="Game\Player.h" />

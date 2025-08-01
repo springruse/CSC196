@@ -11,14 +11,10 @@
 #include "Renderer/ParticleSystem.h"
 #include "Audio/AudioSystem.h"
 
+#include "Core/Random.h"
+
 void Player::Update(float dt)
 {
-	piMath::Particle particle;
-	particle.position = m_transform.position;
-	particle.color = piMath::vec3{ 1,1,1 };
-	particle.velocity = piMath::vec2{ 2,0 };
-	particle.lifeSpan = 1.0f;
-	piMath::GetEngine().GetParticleSystem().AddParticle(particle);
 
 	piMath::vec2 direction{ 1,0 };
 
@@ -34,13 +30,26 @@ void Player::Update(float dt)
     float thrust = 0;
 	if (piMath::GetEngine().GetInput().getKeyDown(SDL_SCANCODE_W))  thrust = +1;
 	if (piMath::GetEngine().GetInput().getKeyDown(SDL_SCANCODE_S))  thrust = -1;
+	// player bounds
+	m_transform.position.x = piMath::Math::Wrap(m_transform.position.x, 0.0f, (float)piMath::GetEngine().GetRenderer().getWidth());
+	m_transform.position.y = piMath::Math::Wrap(m_transform.position.y, 0.0f, (float)piMath::GetEngine().GetRenderer().getHeight());
 
 	piMath::vec2 force = direction.Rotate(piMath::Math::degToRad(m_transform.rotation)) * thrust * speed;
 	velocity += force;
+
+	if (force.Length() > 0) {
+		piMath::Particle particle;
+		particle.position = m_transform.position;
+		particle.color = piMath::vec3{ 1,1,1 };
+		particle.velocity = piMath::vec2{ piMath::Random::onUnitCircle() * piMath::Random::getReal(50.0f, 80.0f) };
+		particle.lifeSpan = 1.0f;
+		piMath::GetEngine().GetParticleSystem().AddParticle(particle);
+
+	}
 	
 	// check if player fires
 	fireTimer -= dt;
-	if (piMath::GetEngine().GetInput().getKeyDown(SDL_SCANCODE_SPACE))
+	if (piMath::GetEngine().GetInput().getKeyDown(SDL_SCANCODE_E))
 	{
 		fireTimer = fireTime; // Reset fire timer
 
@@ -50,17 +59,18 @@ void Player::Update(float dt)
 		rocket->speed = 60.0f;
 		rocket->lifeSpan = 1.5f;
 		rocket->name = "rocket";
-		rocket->tag = "rocket"; // Set rocket name for identification
+		rocket->tag = "player"; // Set rocket name for identification
 		m_scene->AddActor(std::move(rocket));
 	}
-
 
 	Actor::Update(dt);
 
 }
 
+
 void Player::onCollision(Actor* other)
 {
+
 	// add audio when player collides
 	if (tag != other->tag) {
 		destroyed = true;

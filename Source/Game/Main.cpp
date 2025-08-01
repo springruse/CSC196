@@ -120,15 +120,12 @@ int main(int argc, char* argv[]) {
     piMath::GetEngine().GetAudio().addSound("close-hat.wav", "close-hat");
     piMath::GetEngine().GetAudio().addSound("open-hat.wav", "open-hat");
 
-
+    
 
     //MAIN LOOP
     while (!quit) {
         
-		piMath::GetEngine().GetTime().Tick();
-        piMath::GetEngine().GetInput().Update();
-		piMath::GetEngine().GetAudio().Update();
-
+		piMath::GetEngine().Update();
 
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT) {
@@ -139,31 +136,15 @@ int main(int argc, char* argv[]) {
                 quit = true;
             }
         }
-
-        /*if (inputSystem.getKeyReleased(SDL_SCANCODE_A)) {
-			std::cout << "A key pressed!" << std::endl;
-        }
-
-        if (inputSystem.getMouseButtonDown(0)) {
-			std::cout << "Left mouse button pressed!" << std::endl;
-        }
-
-        if (inputSystem.getKeyReleased(SDL_SCANCODE_F)) {
-			audioSystem.playSound("bass");
-        }
-
-		/*if (inputSystem.getKeyDown(SDL_SCANCODE_A)) { transformSystem.rotation -= piMath::Math::degToRad(90 * time.GetDeltaTime()); }
-        if (inputSystem.getKeyDown(SDL_SCANCODE_D)) { transformSystem.rotation += piMath::Math::degToRad(90 * time.GetDeltaTime()); }*/
         
         // draw stuff
         piMath::GetEngine().GetRenderer().SetColor(0.0f, 0.0f, 0.0f); // Set background color to black
         piMath::GetEngine().GetRenderer().Clear();
+        
         game->Update(piMath::GetEngine().GetTime().GetDeltaTime());
-		game->Draw(piMath::GetEngine().GetRenderer()); // uses *
-        
-        
-        piMath::GetEngine().GetRenderer().Present();
+		game->Draw(piMath::GetEngine().GetRenderer());        
        
+        piMath::GetEngine().GetRenderer().Present();
     }
 
 	game->Shutdown();

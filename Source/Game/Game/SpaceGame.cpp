@@ -15,42 +15,29 @@
 #include "Renderer/Text.h"
 #include "GameData.h"
 #include "Enemy.h"
+#include "Ally.h"
 #include "Engine.h"
 #include "Player.h"
 
-
 bool SpaceGame::Initialize()
 {
- 
-	m_scene = std::make_unique<piMath::Scene>(this);
+    m_scene = std::make_unique<piMath::Scene>(this);
 
     m_titleFont = std::make_shared<piMath::Font>();
-	m_titleFont->Load("CFSpaceship-Regular.ttf", 24);
+    m_titleFont->Load("airstrike.ttf", 24);
 
-	m_uiFont = std::make_shared<piMath::Font>();
-    m_uiFont->Load("CFSpaceship-Regular.ttf", 24);
+    m_uiFont = std::make_shared<piMath::Font>();
+    m_uiFont->Load("airstrike.ttf", 24);
 
-	m_titleText = std::make_shared<piMath::Text>(m_titleFont);
-	m_scoreText = std::make_shared<piMath::Text>(m_uiFont);
-	m_livesText = std::make_shared<piMath::Text>(m_uiFont);
+    m_titleText = std::make_shared<piMath::Text>(m_titleFont);
+    m_scoreText = std::make_shared<piMath::Text>(m_uiFont);
+    m_livesText = std::make_shared<piMath::Text>(m_uiFont);
+
+    std::shared_ptr<piMath::Model> newModel = std::make_shared<piMath::Model>(GameData::squarePoint, piMath::vec3{ 0, 0, 1 });
     
+    std::shared_ptr<piMath::Model> EnemyModel = std::make_shared<piMath::Model>(GameData::enemyShipPoints, piMath::vec3{ 1, 0, 0 });
 
-    std::shared_ptr<piMath::Model> newModel = std::make_shared<piMath::Model>(GameData::squarePoint, piMath::vec3{ 0,0,1 });
-	std::shared_ptr<piMath::Model> playerModel = std::make_shared<piMath::Model>(GameData::playerShipPoints, piMath::vec3{ 0,1,0 });
-    std::shared_ptr<piMath::Model> EnemyModel = std::make_shared<piMath::Model>(GameData::enemyShipPoints, piMath::vec3{ 1,0,0 });
-
-    std::vector<piMath::Actor> actors;
-
-    piMath::Transform playerTransform{ piMath::vec2{piMath::GetEngine().GetRenderer().getWidth() * 0.5f, piMath::GetEngine().GetRenderer().getHeight() * 0.5f}, 0.0f, 10.0f};
-    std::shared_ptr<Player> player = std::make_unique<Player>(playerTransform, playerModel);
-
-	player->speed = 20.0f; // Set player speed
-	player->rotationSpeed = 180.0f; // Set player rotation speed
-	player->damping = 0.98f; // Set player damping
-    player->tag = "player"; // Set player name for identification
-	player->name = "player"; // Set player name for identification
-
-	m_scene->AddActor(player); // add the player
+    
 
     return true;
 }
@@ -64,77 +51,109 @@ void SpaceGame::Update(float dt)
 {
     switch (m_gameState)
     {
-        case SpaceGame::GameState::Init:
-			m_gameState = SpaceGame::GameState::Title; // Transition to Title state, change later when debugging is done
-            break;
-        case SpaceGame::GameState::Title:
-            if (piMath::GetEngine().GetInput().getKeyPressed(SDL_SCANCODE_SPACE)) {
-				m_gameState = SpaceGame::GameState::StartGame; // Transition to StartGame state
-            }
-            break;
-        case SpaceGame::GameState::StartGame:
-            m_score = 0;
-            m_lives = 3;
-            m_enemySpawnTimer = 0;
-			m_gameState = SpaceGame::GameState::Game;
-            break;
-        case SpaceGame::GameState::Game:
-			m_enemySpawnTimer -= dt;
-            if (m_enemySpawnTimer <= 0.0f) {
-				m_enemySpawnTimer = 3.0f; // Reset the timer
-				spawnEnemy(); // Spawn enemies
-            }
+    case SpaceGame::GameState::Init:
+        m_gameState = SpaceGame::GameState::Title;
+        break;
 
+    case SpaceGame::GameState::Title:
+        if (piMath::GetEngine().GetInput().getKeyPressed(SDL_SCANCODE_SPACE)) {
+            m_gameState = SpaceGame::GameState::StartGame;
+        }
+        break;
 
-            break;
+    case SpaceGame::GameState::StartGame:
+    {
+        m_score = 0;
+        m_lives = 3;
+        m_enemySpawnTimer = 0;
 
-		case SpaceGame::GameState::StartRound:
-			m_scene->RemoveAllActors(); // Clear the scene for a new round
-            break;
+        std::shared_ptr<piMath::Model> playerModel = std::make_shared<piMath::Model>(GameData::playerShipPoints, piMath::vec3{ 0, 1, 0 });
+        piMath::Transform transform{
+            piMath::vec2{
+                piMath::GetEngine().GetRenderer().getWidth() * 0.25f,
+                piMath::GetEngine().GetRenderer().getHeight() * 0.25f
+            },
+            0.0f,
+            5.0f // change player ship size
+        };
 
-        case SpaceGame::GameState::PlayerDead:
-			m_stateTimer -= dt;
+        auto player = std::make_unique<Player>(transform, playerModel);
+        player->speed = 3.0f;
+        player->rotationSpeed = 180.0f;
+        player->damping = 0.95f;
+        player->fireTime = 4.0f;
+        player->fireTimer = 5.0f;
+        player->SetTransform(transform);
+        player->name = "player";
+        player->tag = "player";
+
+        m_scene->AddActor(std::move(player));
+        m_gameState = SpaceGame::GameState::Game;
+        break;
+    }
+
+    case SpaceGame::GameState::Game:
+        m_enemySpawnTimer -= dt;
+        if (m_enemySpawnTimer <= 0.0f) {
+            m_enemySpawnTimer = 3.0f;
+            SpawnEnemy();
+            SpawnAlly();
+        }
+        break;
+
+    case SpaceGame::GameState::StartRound:
+        SpaceGame::GameState::StartGame;
+        break;
+
+    case SpaceGame::GameState::PlayerDead:
+        m_stateTimer -= dt;
+
+        if (m_stateTimer <= 0) {
             m_lives--;
-            if (m_lives == 0) m_gameState = SpaceGame::GameState::GameOver;
-                
-            else{
-                m_gameState = SpaceGame::GameState::StartRound; // Transition to StartRound state
-			}
-            break;
-        case SpaceGame::GameState::GameOver:
-			m_stateTimer -= dt;
+            if (m_lives == 0) {
+                m_gameState = GameState::GameOver;
+                m_stateTimer = 3;
+            }
+            else {
+                m_gameState = GameState::StartRound;
+            }
+        }
 
-            if (m_stateTimer <= 0.0f) {
-                m_gameState = GameState::Title; // Transition back to Title state
-			}
-            break;
+        break;
 
-	}
+    case SpaceGame::GameState::GameOver:
+        m_stateTimer -= dt;
+        if (m_stateTimer <= 0.0f) {
+            m_gameState = GameState::Title;
+            m_scene->RemoveAllActors();
+        }
+        break;
+    }
 
     if (piMath::GetEngine().GetInput().getKeyDown(SDL_SCANCODE_X)) {
         piMath::GetEngine().GetTime().setTimeScale(0.5);
     }
 
-	m_scene->Update(piMath::GetEngine().GetTime().GetDeltaTime());
+    m_scene->Update(piMath::GetEngine().GetTime().GetDeltaTime());
 }
 
 void SpaceGame::Draw(piMath::Renderer& renderer)
 {
-
     if (m_gameState == GameState::Title) {
-        m_titleText->Create(renderer,"piMath", piMath::vec3{ 0,0.25,0.25 });
+        m_titleText->Create(renderer, "piMath", piMath::vec3{ 0, 0.25f, 0.25f });
         m_scene->Draw(renderer);
     }
+
     if (m_gameState == GameState::GameOver) {
-        m_titleText->Create(renderer,"Game Over!", piMath::vec3{0,0.25,0.25});
+        m_titleText->Create(renderer, "Game Over!", piMath::vec3{ 0, 0.25f, 0.25f });
         m_scene->Draw(renderer);
     }
 
-    m_scoreText->Create(renderer, "SCORE: " + std::to_string(m_score), {1,1,1});
-	m_scoreText->Draw(renderer, 20.0f, 20.0f);
+    m_scoreText->Create(renderer, "SCORE - " + std::to_string(m_score), { 1, 1, 1 });
+    m_scoreText->Draw(renderer, 20.0f, 20.0f);
 
-    m_livesText->Create(renderer, "LIVES: " + std::to_string(m_score), {1,1,1});
-	m_livesText->Draw(renderer, (float)(renderer.getWidth() - 200), (float)20.0f);
+    m_livesText->Create(renderer, "LIVES - " + std::to_string(m_lives), { 1, 1, 1 });
+    m_livesText->Draw(renderer, (float)(renderer.getWidth() - 200), 20.0f);
 
     m_scene->Draw(renderer);
     piMath::GetEngine().GetParticleSystem().Draw(renderer);
@@ -142,29 +161,49 @@ void SpaceGame::Draw(piMath::Renderer& renderer)
 
 void SpaceGame::OnPlayerDeath()
 {
-	m_gameState = GameState::PlayerDead; // Transition to PlayerDead state
-	m_stateTimer = 2.0f; 
+    m_gameState = GameState::PlayerDead;
+    m_stateTimer = 2.0f;
 }
 
-void SpaceGame::spawnEnemy()
+void SpaceGame::SpawnEnemy()
 {
     Player* player = m_scene->GetActorByName<Player>("player");
- 
-        if (player) {
-            std::shared_ptr<piMath::Model> EnemyModel = std::make_shared<piMath::Model>(GameData::enemyShipPoints, piMath::vec3{ 1,0,0 }); // Create a new enemy model
 
-			piMath::vec2 playerPosition = player->m_transform.position + piMath::Random::onUnitCircle() * piMath::Random::getReal(100.0f, 200.0f);
-            piMath::Transform transform{playerPosition, piMath::Random::getReal(0.0f, 360.0f), 10};
+    if (player) {
+        std::shared_ptr<piMath::Model> EnemyModel = std::make_shared<piMath::Model>(GameData::enemyShipPoints, piMath::vec3{ 1, 0, 0 });
+        
+        piMath::vec2 enemyPosition = player->m_transform.position + piMath::Random::onUnitCircle() * piMath::Random::getReal(300.0f, 500.0f); // points where enemy is allowed to spawn from player
+        piMath::Transform transform{ enemyPosition, piMath::Random::getReal(0.0f, 360.0f), 10.0f }; // 10.0f is the enemy size
 
-            std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>(transform, EnemyModel);
-            enemy->damping = 0.98f;
-            enemy->speed = piMath::Random::getReal() * 3.0f + 1.0f; // Random speed between 3 and 1
-            enemy->tag = "enemy"; // Set enemy name for identification
-            enemy->name = "enemy"; // Set enemy name for identification
-            enemy->firetimer = 3.0f; // Initialize fire timer
-            enemy->fireTime = 5.0f; // Set time between shots in seconds
-            m_scene->AddActor(std::move(enemy));
-        }
+        std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>(transform, EnemyModel);
+        enemy->damping = 0.98f;
+        enemy->speed = piMath::Random::getReal(2.0f, 3.0f);
+        enemy->tag = "enemy";
+        enemy->name = "enemy";
+        enemy->firetimer = 3.0f;
+        enemy->fireTime = 5.0f;
+
+        m_scene->AddActor(std::move(enemy));
+    }
 }
 
+void SpaceGame::SpawnAlly() {
+    Enemy* enemy = m_scene->GetActorByName<Enemy>("enemy");
 
+    if (enemy) {
+        std::shared_ptr<piMath::Model> allyModel = std::make_shared<piMath::Model>(GameData::enemyShipPoints, piMath::vec3{ 0, 0.50f, 0 });
+
+        piMath::vec2 enemyPosition = enemy->m_transform.position + piMath::Random::onUnitCircle() * piMath::Random::getReal(300.0f, 500.0f); // points where an ally is allowed to spawn near an enemy
+        piMath::Transform transform{ enemyPosition, piMath::Random::getReal(0.0f, 360.0f), 5.0f }; // 10.0f is the enemy size
+
+        std::unique_ptr<Ally> ally = std::make_unique<Ally>(transform, allyModel);
+        ally->damping = 0.98f;
+        ally->speed = piMath::Random::getReal(5.0f, 8.0f);
+        ally->tag = "player";
+        ally->name = "player";
+        ally->firetimer = 3.0f;
+        ally->fireTime = 5.0f;
+
+        m_scene->AddActor(std::move(ally));
+    }
+}

@@ -16,33 +16,35 @@ void Enemy::Update(float deltaTime)
 	Player* player = m_scene->GetActorByName<Player>("player");
 
 	if (player) {
-		piMath::vec2 direction{ 0,0 };
-		direction = player -> m_transform.position - m_transform.position;
-		direction = direction.Normalize();
-		m_transform.rotation = piMath::Math::radToDeg(direction.Angle());
+		bool playerSeen = false;
 
-		piMath::vec2 forward = piMath::vec2{ 1,0 }.Rotate(m_transform.rotation);
-		
-		float angle = piMath::vec2::SignedAngleBetween(forward, direction);
+		Player* player = m_scene->GetActorByName<Player>("player");
+		if (player) {
+			piMath::vec2 direction{ 0, 0 };
+			direction = player->m_transform.position - m_transform.position;
 
-		angle = piMath::Math::Sign(angle);
+			direction = direction.Normalize();
+			piMath::vec2 forward = piMath::vec2{ 1, 0 }.Rotate(piMath::Math::degToRad(m_transform.rotation));
 
-		m_transform.rotation += piMath::Math::radToDeg(angle * 5 * deltaTime);
+			float angle = piMath::Math::radToDeg(piMath::vec2::AngleBetween(forward, direction));
+			playerSeen = angle <= 30;
 
-		angle = piMath::vec2::AngleBetween(forward, direction);
-		playerSeen = angle <= 30;
-
-
+			if (playerSeen) {
+				float angle = piMath::vec2::SignedAngleBetween(forward, direction);
+				angle = piMath::Math::Sign(angle);
+				m_transform.rotation += piMath::Math::radToDeg(angle * 5 * deltaTime);
+			}
+		}
 	}
 
-	piMath::vec2 force = direction * speed;
+	piMath::vec2 force = piMath::vec2{ 1,0 }.Rotate(piMath::Math::degToRad(m_transform.rotation)) * speed;
 	velocity += force;
+		
+	m_transform.position.x = piMath::Math::Wrap(m_transform.position.x, 0.0f, (float)piMath::GetEngine().GetRenderer().getWidth());
+	m_transform.position.y = piMath::Math::Wrap(m_transform.position.y, 0.0f, (float)piMath::GetEngine().GetRenderer().getHeight());
 
-	Actor::Update(deltaTime);
-	// attempt to wrap
-	//m_transform.position.x = piMath::Math::wrap(m_transform.position.x, 0.0f, 0.0f);
-	//m_transform.position.y = piMath::Math::wrap(m_transform.position.y, 0.0f, 1024.0f);
 	firetimer = deltaTime;
+
 	if (firetimer <= 0 && playerSeen)
 	{
 		firetimer = fireTime;
@@ -52,10 +54,13 @@ void Enemy::Update(float deltaTime)
 		rocket->speed = 30.0f;
 		rocket->lifeSpan = 1.5f;
 		rocket->name = "rocket";
-		rocket->tag = "enemy";
+		rocket->tag = "enemy"; 
 		
 		m_scene->AddActor(std::move(rocket));
 	}
+
+	Actor::Update(deltaTime);
+
 }
 
 void Enemy::onCollision(Actor* other)

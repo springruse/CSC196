@@ -42,5 +42,6 @@ class SpaceGame : public piMath::Game {
 		std::shared_ptr <class piMath::Text>  m_scoreText;
 		std::shared_ptr <class piMath::Text>  m_livesText;
 	private:
-	void spawnEnemy();
+	void SpawnEnemy();
+	void SpawnAlly();
 };

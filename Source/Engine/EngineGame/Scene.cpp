@@ -17,7 +17,7 @@ namespace piMath {
 		// remove destroyed actors
 		for (auto iterate = m_actors.begin(); iterate != m_actors.end();) {
 			if ((*iterate)->destroyed) {
-				m_actors.erase(iterate); // Remove actors that are no longer alive
+				iterate = m_actors.erase(iterate) ; // Remove actors that are no longer alive
 			}
 			else {
 				++iterate; // Move to the next actor

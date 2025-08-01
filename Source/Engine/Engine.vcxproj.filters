@@ -5,9 +5,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Math">
-      <UniqueIdentifier>{fd55939a-fff6-4ddf-a581-52c639fd7b4e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -26,6 +23,9 @@
     </Filter>
     <Filter Include="Source\EngineGame">
       <UniqueIdentifier>{2c7fb709-5843-4afe-af3d-e2cd16443d95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Math">
+      <UniqueIdentifier>{fd55939a-fff6-4ddf-a581-52c639fd7b4e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -74,7 +74,7 @@
       <Filter>Source\Core</Filter>
     </ClInclude>
     <ClInclude Include="Math\Math.h">
-      <Filter>Math</Filter>
+      <Filter>Source\Math</Filter>
     </ClInclude>
     <ClInclude Include="Core\Random.h">
       <Filter>Source\Core</Filter>
@@ -86,7 +86,7 @@
       <Filter>Source\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Math\Vector2.h">
-      <Filter>Math</Filter>
+      <Filter>Source\Math</Filter>
     </ClInclude>
     <ClInclude Include="Input\InputSystem.h">
       <Filter>Source\Input</Filter>
@@ -95,7 +95,7 @@
       <Filter>Source\Audio</Filter>
     </ClInclude>
     <ClInclude Include="Math\Vector3.h">
-      <Filter>Math</Filter>
+      <Filter>Source\Math</Filter>
     </ClInclude>
     <ClInclude Include="Core\StringHelper.h">
       <Filter>Source\Core</Filter>
@@ -104,7 +104,7 @@
       <Filter>Source\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Math\Transform.h">
-      <Filter>Math</Filter>
+      <Filter>Source\Math</Filter>
     </ClInclude>
     <ClInclude Include="EngineGame\Actor.h">
       <Filter>Source\EngineGame</Filter>

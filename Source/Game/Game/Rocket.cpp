@@ -10,9 +10,6 @@ void Rocket::Update(float deltaTime)
 	piMath::vec2 force = piMath::vec2{ 1,0 }.Rotate(piMath::Math::degToRad(m_transform.rotation)) * speed;
 	velocity += force;
 
-	m_transform.position.x = piMath::Math::Wrap(m_transform.position.x, 0.0f, (float) piMath::GetEngine().GetRenderer().getWidth());
-	m_transform.position.y = piMath::Math::Wrap(m_transform.position.y, 0.0f, (float) piMath::GetEngine().GetRenderer().getHeight());
-
 	float angle = m_transform.rotation + piMath::Random::getReal(-30.0f, 30.0f);
 	piMath::vec2 velocity = piMath::vec2{ 1,0 }.Rotate(piMath::Math::degToRad(angle));
 	velocity += piMath::Random::getReal(100.0f, 200.0f);
@@ -21,7 +18,7 @@ void Rocket::Update(float deltaTime)
 	particle.position = m_transform.position;
 	particle.color = (tag == "enemy") ? piMath::vec3{ 1,0,0 } : piMath::vec3{ 1,1,1 };
 	particle.velocity = piMath::vec2{ piMath::Random::onUnitCircle() * piMath::Random::getReal(50.0f, 80.0f) };
-	particle.lifeSpan = piMath::Random::getReal(0.5f,0.15f);
+	particle.lifeSpan = piMath::Random::getReal(0.15f,0.5f);
 	piMath::GetEngine().GetParticleSystem().AddParticle(particle);
 
 	Actor::Update(deltaTime);
