@@ -18,8 +18,12 @@
 #include "Ally.h"
 #include "Engine.h"
 #include "Player.h"
+#include "Audio/AudioSystem.h"
+
+
 
 bool SpaceGame::Initialize()
+
 {
     m_scene = std::make_unique<piMath::Scene>(this);
 
@@ -32,6 +36,9 @@ bool SpaceGame::Initialize()
     m_titleText = std::make_shared<piMath::Text>(m_titleFont);
     m_scoreText = std::make_shared<piMath::Text>(m_uiFont);
     m_livesText = std::make_shared<piMath::Text>(m_uiFont);
+    piMath::GetEngine().GetAudio().addSound("wisteria.mp3", "wisteria");
+    piMath::GetEngine().GetAudio().addSound("deathSound.wav", "death");
+    piMath::GetEngine().GetAudio().addSound("shipBlast1.wav", "blaster");
 
     std::shared_ptr<piMath::Model> newModel = std::make_shared<piMath::Model>(GameData::squarePoint, piMath::vec3{ 0, 0, 1 });
     
@@ -49,6 +56,8 @@ void SpaceGame::Shutdown()
 
 void SpaceGame::Update(float dt)
 {
+    
+
     switch (m_gameState)
     {
     case SpaceGame::GameState::Init:
@@ -81,8 +90,8 @@ void SpaceGame::Update(float dt)
         player->speed = 3.0f;
         player->rotationSpeed = 180.0f;
         player->damping = 0.95f;
-        player->fireTime = 4.0f;
-        player->fireTimer = 5.0f;
+        player->fireTime = 50.0f;
+        player->fireTimer = 0.01f;
         player->SetTransform(transform);
         player->name = "player";
         player->tag = "player";
@@ -100,6 +109,7 @@ void SpaceGame::Update(float dt)
             SpawnAlly();
         }
         break;
+        
 
     case SpaceGame::GameState::StartRound:
         SpaceGame::GameState::StartGame;
@@ -128,7 +138,12 @@ void SpaceGame::Update(float dt)
             m_scene->RemoveAllActors();
         }
         break;
+
+    default:
+        break;
     }
+   
+
 
     if (piMath::GetEngine().GetInput().getKeyDown(SDL_SCANCODE_X)) {
         piMath::GetEngine().GetTime().setTimeScale(0.5);

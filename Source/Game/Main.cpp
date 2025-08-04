@@ -119,8 +119,8 @@ int main(int argc, char* argv[]) {
     piMath::GetEngine().GetAudio().addSound("clap.wav", "clap");
     piMath::GetEngine().GetAudio().addSound("close-hat.wav", "close-hat");
     piMath::GetEngine().GetAudio().addSound("open-hat.wav", "open-hat");
-
     
+    piMath::GetEngine().GetAudio().playSound("Wisteria");
 
     //MAIN LOOP
     while (!quit) {

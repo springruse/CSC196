@@ -52,7 +52,7 @@ void Player::Update(float dt)
 	if (piMath::GetEngine().GetInput().getKeyDown(SDL_SCANCODE_E))
 	{
 		fireTimer = fireTime; // Reset fire timer
-
+		piMath::GetEngine().GetAudio().playSound("blaster");
 		std::shared_ptr<piMath::Model> rocketModel = std::make_shared<piMath::Model>(GameData::rocketPoints, piMath::vec3{ 1,1,1 });
 		piMath::Transform rocketTransform{ this->m_transform.position, this->m_transform.rotation, 1.0f };
 		auto rocket = std::make_unique<Rocket>(rocketTransform, rocketModel);
@@ -71,11 +71,12 @@ void Player::Update(float dt)
 void Player::onCollision(Actor* other)
 {
 
-	// add audio when player collides
+	
 	if (tag != other->tag) {
 		destroyed = true;
+		piMath::GetEngine().GetAudio().playSound("death");
 		dynamic_cast<SpaceGame*>(m_scene->GetGame())->OnPlayerDeath(); // Notify the game of player death
 	}
-
+	std::cout << other->tag << std::endl;
 	
 }

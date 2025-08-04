@@ -67,6 +67,7 @@ void Enemy::onCollision(Actor* other)
 {
 	if (tag != other->tag) {
 		destroyed = true; 
+		piMath::GetEngine().GetAudio().playSound("death");
 		m_scene->GetGame()->addPoints(100); // Add points to the game when an enemy is destroyed
 		for (int i = 0; i < 100; i++) {
 			piMath::Particle particle;
